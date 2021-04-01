@@ -4,6 +4,7 @@
   "description": "Login & Authentication Functionality",
   "private": true,
   "homepage": "https://thnlsn.github.io/login-fn/",
+  "proxy": "http://localhost:3000",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
@@ -14,7 +15,7 @@
     "mongoose": "^5.12.3",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
-    "react-scripts": "^3.4.1"
+    "react-scripts": "3.4.1"
   },
   "devDependencies": {
     "autoprefixer": "^10.2.4",
@@ -28,6 +29,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "server": "nodemon server.js",
     "dev": "npm-run-all -p -r start watch:sass",
     "watch:sass": "sass --watch src/sass/main.scss src/css/style.css",
     "compile:sass": "sass src/sass/main.scss src/css/style.comp.css",
