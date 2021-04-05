@@ -20,7 +20,7 @@ const cardsRouter = require('./routes/cards'); // import cards routes
 
 // Basic route
 app.get('/', (_, res) => {
-  res.json({ msg: 'Welcome!' });
+  res.json({ msg: 'Welcome to Flipnote!' });
 });
 
 // Prefix a route which when hit will access the router file that contains those concerns
