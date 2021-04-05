@@ -1,5 +1,5 @@
 const router = require('express').Router();
-let Card = require('../models/exercise.model');
+let Card = require('../models/cards.model');
 
 // GET ALL CARDS
 router.route('/').get((req, res) => {
@@ -8,7 +8,7 @@ router.route('/').get((req, res) => {
     .catch((err) => res.status(400).json('Error: ' + err));
 });
 
-// ADD A NEW EXERCISE
+// ADD A NEW CARD
 router.route('/add').post((req, res) => {
   const username = req.body.username;
   const description = req.body.description;
