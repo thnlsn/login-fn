@@ -1,34 +1,51 @@
 const router = require('express').Router();
-let Card = require('../models/cards.model');
+const Card = require('../models/cards.model');
 
-// GET ALL CARDS
+// @route     GET /cards/
+// @desc      Read/get all cards of a specific user
+// @access    Private (because only the logged in user should see all their cards)
 router.route('/').get((req, res) => {
   Card.find()
     .then((cards) => res.json(cards))
     .catch((err) => res.status(400).json('Error: ' + err));
 });
 
-// ADD A NEW CARD
+// @route     PUT /cards/add
+// @desc      Add a new card
+// @access    Private (because we are adding to the logged in users account)
 router.route('/add').post((req, res) => {
-  const username = req.body.username;
-  const description = req.body.description;
-  const duration = Number(req.body.duration);
-  const date = Date.parse(req.body.date);
+  const front = req.body.front;
+  const back = req.body.back;
 
   const newCard = new Card({
-    username,
-    description,
-    duration,
-    date,
+    front,
+    back,
   });
 
   newCard
     .save()
-    .then(() => res.json('Card added!'))
+    .then(() =>
+      res.json(`Card added!
+                Front: ${front}
+                Back: ${back}`)
+    )
     .catch((err) => res.status(400).json('Error: ' + err));
 });
 
-// GET A SPECIFIC EXERCISE
+// @route     PUT /cards/update/:id
+// @desc      Update an existing card
+// @access    Private (because we are updated logged in users card)
+router.route('/update/:id').put((req, res) => {
+  Card.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    .then(() =>
+      res.json(`Card updated!
+                  Front: ${req.body.front}
+                  Back: ${req.body.back}`)
+    )
+    .catch((err) => res.status(400).json('Error: ' + err));
+});
+
+/* // GET A SPECIFIC EXERCISE
 router.route('/:id').get((req, res) => {
   Card.findById(req.params.id)
     .then((exercise) => res.json(exercise))
@@ -40,7 +57,7 @@ router.route('/:id').delete((req, res) => {
   Card.findByIdAndDelete(req.params.id)
     .then(() => res.json('Card deleted.'))
     .catch((err) => res.status(400).json('Error: ' + err));
-});
+}); */
 
 // UPDATE SPECIFIC EXERCISE
 router.route('/update/:id').post((req, res) => {
