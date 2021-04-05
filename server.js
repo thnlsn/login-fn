@@ -16,7 +16,7 @@ connectDB(); // Init MongoDB database connection
 // Bringing in entire route files to seperate routing concerns
 const authRouter = require('./routes/auth'); // import users routes
 const usersRouter = require('./routes/users'); // import users routes
-const exercisesRouter = require('./routes/exercises'); // import exercises routes
+const cardsRouter = require('./routes/cards'); // import cards routes
 
 // Basic route
 app.get('/', (_, res) => {
@@ -25,8 +25,8 @@ app.get('/', (_, res) => {
 
 // Prefix a route which when hit will access the router file that contains those concerns
 app.use('/auth', authRouter); // When /auth is hit, use routes from ./routes/auth.js
-app.use('/users', usersRouter); // When /users is hit, use routes from ./routes/exercises.js
-app.use('/exercises', exercisesRouter); // When /exercises is hit, use routes from ./routes/exercises.js
+app.use('/users', usersRouter); // When /users is hit, use routes from ./routes/users.js
+app.use('/cards', cardsRouter); // When /cards is hit, use routes from ./routes/cards.js
 
 // Listening on PORT
 app.listen(PORT, () => {
