@@ -1,14 +1,15 @@
-const express = require('express');
+const express = require('express'); //
 const cors = require('cors');
 const mongoose = require('mongoose');
 
-require('dotenv').config();
+require('dotenv').config(); // Environment variables to keep keys secure
 
-const app = express();
-const PORT = process.env.PORT || 5000;
+const app = express(); // Init express in variable app
+const PORT = process.env.PORT || 5000; // Use PORT else 5000
 
-app.use(cors());
-app.use(express.json());
+// Middleware
+app.use(cors()); // Enable CORS w/ options
+app.use(express.json()); // Parses JSON requests (body-parser replacement)
 
 // Connecting the MongoDB Database
 const URI = process.env.ATLAS_URI; // Private URI to connect to MongoDB Atlas
@@ -23,11 +24,11 @@ connection.once('open', () => {
 });
 
 // Telling server to use the route files
-const exercisesRouter = require('./routes/exercises'); // import routes
-const usersRouter = require('./routes/users'); // import routes
+const exercisesRouter = require('./routes/exercises'); // import exercises routes
+const usersRouter = require('./routes/users'); // import users routes
 
-app.use('/exercises', exercisesRouter); // middleware to handle route /excercises
-app.use('/users', usersRouter); // middleware to handle route /users
+app.use('/exercises', exercisesRouter); // When /exercises is hit, use routes from ./routes/exercises
+app.use('/users', usersRouter); // When /users is hit, use routes from ./routes/exercises
 
 // Listening on PORT
 app.listen(PORT, () => {
