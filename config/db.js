@@ -10,13 +10,11 @@ const connectDB = async () => {
       useCreateIndex: true,
       useUnifiedTopology: true,
     });
-    console.log('MongoDB database connection established successfully.');
+    console.log('MongoDB database connection established successfully...');
   } catch (err) {
     console.error(`MongoDB Connection Error: ${err.message}`);
     process.exit(1); // 1 is uncaught exception status code
   }
-
-  const connection = mongoose.connection;
 };
 
 module.exports = connectDB;
