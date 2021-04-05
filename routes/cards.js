@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const Card = require('../models/cards.model');
+let Card = require('../models/cards.model');
 
 // @route     GET /cards/
 // @desc      Read/get all cards of a specific user
@@ -45,34 +45,13 @@ router.route('/update/:id').put((req, res) => {
     .catch((err) => res.status(400).json('Error: ' + err));
 });
 
-/* // GET A SPECIFIC EXERCISE
-router.route('/:id').get((req, res) => {
-  Card.findById(req.params.id)
-    .then((exercise) => res.json(exercise))
-    .catch((err) => res.status(400).json('Error: ' + err));
-});
-
-// DELETE A SPECIFIC EXERCISE
-router.route('/:id').delete((req, res) => {
-  Card.findByIdAndDelete(req.params.id)
-    .then(() => res.json('Card deleted.'))
-    .catch((err) => res.status(400).json('Error: ' + err));
-}); */
-
-// UPDATE SPECIFIC EXERCISE
-router.route('/update/:id').post((req, res) => {
-  Card.findById(req.params.id)
-    .then((card) => {
-      card.username = req.body.username;
-      card.description = req.body.description;
-      card.duration = Number(req.body.duration);
-      card.date = Date.parse(req.body.date);
-
-      card
-        .save()
-        .then(() => res.json('Card updated!'))
-        .catch((err) => res.status(400).json('Error: ' + err));
-    })
+// @route     DELETE /cards/update/:id
+// @desc      Delete an existing card
+// @access    Private (because we are deleting logged in users card)
+router.route('/delete/:id').delete(({ params: { id } }, res) => {
+  // Remove by the id of the request params destructured
+  Card.findByIdAndRemove(id)
+    .then(() => res.json('Card deleted!'))
     .catch((err) => res.status(400).json('Error: ' + err));
 });
 
