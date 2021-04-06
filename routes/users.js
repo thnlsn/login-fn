@@ -1,6 +1,7 @@
 const router = require('express').Router();
-let User = require('../models/user.model');
+const User = require('../models/user.model');
 const { body, validationResult } = require('express-validator');
+const bcrypt = require('bcryptjs');
 
 // @route     GET /users/
 // @desc      Read/get all users who are in the database
@@ -33,14 +34,25 @@ router.post(
       return res.status(400).json(errors.array()[0].msg);
     }
 
-    // Construct User given an object/json body
-    const newUser = new User({ username, email, password });
+    // Destructure user inputs from req.body
+    const { username, email, password } = req.body;
 
-    // Call the save method to save it to the database to the collection (which is determined in the schema, if it is the first item to be saved, the collection will be generated and pluralized with an s at the end, unless it already has)
-    newUser
-      .save() // Save it
-      .then(() => res.json(`User ${username} added!`)) // Once saved, tell the user
-      .catch((err) => res.status(400).json('Users Route Error: ' + err));
+    try {
+      // Construct User given an object/json body (not saved yet, just initialized)
+      const newUser = new User({ username, email, password });
+
+      // Generate a bcrypt salt
+      const salt = await bcrypt.genSaltSync(10);
+
+      // Mutate the password as it was originally stored in newUser constructor
+      newUser.password = await bcrypt.hash(password, salt);
+
+      // Call the save method to save it to the database to the collection (which is determined in the schema, if it is the first item to be saved, the collection will be generated and pluralized with an s at the end, unless it already has)
+      await newUser.save(); // Save it
+      res.json(`User ${username} added!`); // Once saved, tell the user
+    } catch (err) {
+      res.status(500).json('Users Route Server Error: ' + err);
+    }
   }
 );
 
