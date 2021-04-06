@@ -3,6 +3,7 @@ const User = require('../models/user.model');
 const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs'); // To hash password
+require('dotenv').config(); // Environment variables to keep keys secure
 
 // @route     GET /users/
 // @desc      Read/get all users who are in the database
@@ -46,6 +47,7 @@ router.post(
       // Check if user inputted email already exists in db
       // Set newUser to the user with the email inputted
       let newUser = await User.findOne({ email });
+      // console.log(newUser.id);
       // If there is a user with that email, send this error
       if (newUser) {
         return res.status(400).json({
@@ -63,6 +65,7 @@ router.post(
       // Otherwise there was not a user with that email and we are safe to proceed
       // Construct User given an object/json body (not saved yet, just initialized)
       newUser = new User({ username, email, password });
+      // console.log(newUser.id); // Once this new user is created, the mongoDB ID is also generated, which can be used as payload for jwt later on.
 
       // Generate a bcrypt salt
       const salt = await bcrypt.genSaltSync(10);
@@ -72,17 +75,28 @@ router.post(
 
       // Call the save method to save it to the database to the collection (which is determined in the schema, if it is the first item to be saved, the collection will be generated and pluralized with an s at the end, unless it already has)
       await newUser.save(); // Save it
-      res.json({ msg: `User ${username} added!` }); // Once saved, tell the user
+      // res.json({ msg: `User ${username} added!` }); // Once saved, tell the user
 
-      // Now we want to generate a token for the current session...
-      //jwt.sign(payload, secretOrPrivateKey, [options, callback])
+      // Now we want to generate a token for the current session because we want to immidiately log the user in after signup...
 
-      // payload is what we want to send back to the user once
-      const payload = {};
-      //
+      // payload is what we want to send back to the user once verified, it has to be an object literal or represent valid JSON
+      const payload = { id: newUser.id };
+
+      // jwt.sign(payload, secretOrPrivateKey, [options, callback])
+      jwt.sign(
+        payload, // Object w/ id
+        process.env.JWT_SECRET, // Secret signature
+        { expiresIn: 360000 }, // Options (expires in 1 hour)
+        // Given these arguments, callback runs and either fails or succeeds
+        (err, token) => {
+          if (err) throw err; // err is thrown to the catch and function is stopped
+          res.json({ token }); // Otherwise, send the token back as JSON
+        }
+      );
     } catch (err) {
       // If any undefined errors still occur, send a generic error message with the error
-      res.status(500).json('Users Route Server Error: ' + err);
+      console.error(err); // Only devs this, so log it rather than send JSON
+      res.status(500).json('Users Route Server Error');
     }
   }
 );
