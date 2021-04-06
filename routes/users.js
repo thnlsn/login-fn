@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const User = require('../models/user.model');
 const { body, validationResult } = require('express-validator');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs'); // To hash password
 
 // @route     GET /users/
 // @desc      Read/get all users who are in the database
@@ -19,6 +19,7 @@ router.get('/', (req, res) => {
 // @validation    true
 router.post(
   '/add',
+  // express-validator checks
   body('username', 'Please enter a username with at least 3 characters.')
     .not()
     .isEmpty()
@@ -29,6 +30,7 @@ router.post(
     'Please enter a a password with at least 6 characters.'
   ).isLength({ min: 6 }),
   async (req, res) => {
+    // If any express-validator check fails, send the above defined error message.
     const errors = validationResult(req);
     // If errors is NOT empty (so if there IS an error)
     if (!errors.isEmpty()) {
@@ -71,6 +73,7 @@ router.post(
       await newUser.save(); // Save it
       res.json(`User ${username} added!`); // Once saved, tell the user
     } catch (err) {
+      // If any undefined errors still occur, send a generic error message with the error
       res.status(500).json('Users Route Server Error: ' + err);
     }
   }
