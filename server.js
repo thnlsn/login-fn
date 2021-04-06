@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 5000; // Use PORT else 5000
 
 // Middleware
 app.use(cors()); // Enable CORS w/ options
-app.use(express.json()); // Parses JSON requests (body-parser replacement)
+app.use(express.json()); // Parses JSON requests (body-parser replacement) which allows us to access req.body
 
 connectDB(); // Init MongoDB database connection
 
