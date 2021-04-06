@@ -6,12 +6,14 @@ const userSchema = new Schema({
   username: {
     type: String,
     required: true,
+    index: true,
     unique: true,
     minlength: 3,
   },
   email: {
     type: String,
     required: true,
+    index: true,
     unique: true,
   },
   password: {
@@ -20,7 +22,7 @@ const userSchema = new Schema({
   },
   date: {
     type: Date,
-    default: Date.now(), // Timestamp of the time the user was created
+    default: Date.now, // Timestamp of the time the user was created
   },
 });
 
