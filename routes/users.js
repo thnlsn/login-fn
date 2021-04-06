@@ -90,7 +90,7 @@ router.post(
         // Given these arguments, callback runs and either fails or succeeds
         (err, token) => {
           if (err) throw err; // err is thrown to the catch and function is stopped
-          res.json({ token }); // Otherwise, send the token back as JSON
+          res.json({ token }); // Otherwise, send the token back as JSON object with ES6 syntax (same as token: token)
         }
       );
     } catch (err) {
