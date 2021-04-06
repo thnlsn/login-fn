@@ -16,10 +16,7 @@ router.get('/', (_, res) => {
 // @validation    true
 router.post(
   '/',
-  body(
-    'email',
-    'That email address does not exist. Please try another.'
-  ).isEmail(),
+  body('email', 'Please enter an email address.').isEmail(),
   body('password', 'Please enter a password.').exists(),
   async (req, res) => {
     // If any express-validator check fails, send the above defined error message.
@@ -29,6 +26,31 @@ router.post(
       // Respond with status 400 (bad request) and the error message
       return res.status(400).json({ msg: errors.array()[0].msg });
     }
+
+    // Destructure user login inputs
+    const { email, password } = req.body;
+
+    try {
+      // Find an account with the inputted email
+      let user = await User.findOne({ email });
+
+      // If that account exists, negate and skip this because it exists.
+      // However if it does NOT exist, it will be negated to true and will execute
+      if (!user) {
+        res.status(400).json({ msg: 'Invalid credentials. Please try again' });
+      }
+
+      // If there is a user, continue to check the password
+      // .compare() takes in the password as it was input at login, and the hash of the user in the database with the input email, to check them on eachother.
+      // .compare(pass, hash) ===> true/false
+      const isMatch = await bcrypt.compare(password, user.password);
+      // If isMatch is not true, handle it with an error response
+      if (!isMatch) {
+        res
+          .status(400)
+          .json({ msg: 'Password is incorrect. Please try again.' });
+      } // Otherwise move on...
+    } catch (err) {}
   }
 );
 
