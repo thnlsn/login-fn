@@ -24,19 +24,15 @@ router.post(
     'password',
     'Please enter a a password with at least 6 characters.'
   ).isLength({ min: 6 }),
-  (req, res) => {
-    const { username, email, password } = req.body; // Destructure body properties
-
+  async (req, res) => {
     const errors = validationResult(req);
 
+    // If errors is NOT empty (so if there IS an error)
     if (!errors.isEmpty()) {
+      // Respond with status 400 (bad request) and the error message
       return res.status(400).json(errors.array()[0].msg);
     }
 
-    //
-    //
-    //
-    //
     // Construct User given an object/json body
     const newUser = new User({ username, email, password });
 
