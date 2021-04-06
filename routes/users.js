@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const User = require('../models/user.model');
 const { body, validationResult } = require('express-validator');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs'); // To hash password
 
 // @route     GET /users/
@@ -71,7 +72,14 @@ router.post(
 
       // Call the save method to save it to the database to the collection (which is determined in the schema, if it is the first item to be saved, the collection will be generated and pluralized with an s at the end, unless it already has)
       await newUser.save(); // Save it
-      res.json(`User ${username} added!`); // Once saved, tell the user
+      res.json({ msg: `User ${username} added!` }); // Once saved, tell the user
+
+      // Now we want to generate a token for the current session...
+      //jwt.sign(payload, secretOrPrivateKey, [options, callback])
+
+      // payload is what we want to send back to the user once
+      const payload = {};
+      //
     } catch (err) {
       // If any undefined errors still occur, send a generic error message with the error
       res.status(500).json('Users Route Server Error: ' + err);

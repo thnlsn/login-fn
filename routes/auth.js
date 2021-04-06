@@ -37,7 +37,9 @@ router.post(
       // If that account exists, negate and skip this because it exists.
       // However if it does NOT exist, it will be negated to true and will execute
       if (!user) {
-        res.status(400).json({ msg: 'Invalid credentials. Please try again' });
+        res
+          .status(400)
+          .json({ msg: 'User does not exist. Try a different email.' });
       }
 
       // If there is a user, continue to check the password
@@ -50,6 +52,8 @@ router.post(
           .status(400)
           .json({ msg: 'Password is incorrect. Please try again.' });
       } // Otherwise move on...
+
+      // Now we want to generate a token for the current session...
     } catch (err) {}
   }
 );
