@@ -19,7 +19,10 @@ router.get('/', (req, res) => {
 // @validation    true
 router.post(
   '/add',
-  body('username', 'Please enter a valid email username.').not().isEmpty(),
+  body('username', 'Please enter a username with at least 3 characters.')
+    .not()
+    .isEmpty()
+    .isLength({ min: 3 }),
   body('email', 'Please enter a valid email address.').isEmail(),
   body(
     'password',
@@ -27,19 +30,36 @@ router.post(
   ).isLength({ min: 6 }),
   async (req, res) => {
     const errors = validationResult(req);
-
     // If errors is NOT empty (so if there IS an error)
     if (!errors.isEmpty()) {
       // Respond with status 400 (bad request) and the error message
-      return res.status(400).json(errors.array()[0].msg);
+      return res.status(400).json({ msg: errors.array()[0].msg });
     }
 
     // Destructure user inputs from req.body
     const { username, email, password } = req.body;
 
     try {
+      // Check if user inputted email already exists in db
+      // Set newUser to the user with the email inputted
+      let newUser = await User.findOne({ email });
+      // If there is a user with that email, send this error
+      if (newUser) {
+        return res.status(400).json({
+          msg: `Account with email ${email} already exists! Please try a different email.`,
+        });
+      }
+      newUser = await User.findOne({ username });
+      // If there is a user with that email, send this error
+      if (newUser) {
+        return res.status(400).json({
+          msg: `Account with username: ${username} already exists! Please use a different username.`,
+        });
+      }
+
+      // Otherwise there was not a user with that email and we are safe to proceed
       // Construct User given an object/json body (not saved yet, just initialized)
-      const newUser = new User({ username, email, password });
+      newUser = new User({ username, email, password });
 
       // Generate a bcrypt salt
       const salt = await bcrypt.genSaltSync(10);
