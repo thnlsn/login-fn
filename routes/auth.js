@@ -69,7 +69,10 @@ router.post(
           res.json({ token });
         }
       );
-    } catch (err) {}
+    } catch (err) {
+      console.error('auth.js' + err);
+      res.json('Auth Routes Server Error');
+    }
   }
 );
 

@@ -95,7 +95,7 @@ router.post(
       );
     } catch (err) {
       // If any undefined errors still occur, send a generic error message with the error
-      console.error(err); // Only devs this, so log it rather than send JSON
+      console.error('users.js' + err); // Only devs this, so log it rather than send JSON
       res.status(500).json('Users Route Server Error');
     }
   }
